@@ -8,8 +8,9 @@ import (
 )
 
 type Config struct {
-	Port string
-	ENV  string
+	Port  string
+	DbUrl string
+	ENV   string
 }
 
 func LoadConfig() Config {
@@ -25,7 +26,8 @@ func LoadConfig() Config {
 	}
 
 	return Config{
-		Port: port,
-		ENV:  os.Getenv("ENV"),
+		Port:  port,
+		DbUrl: os.Getenv("DB_URL"),
+		ENV:   os.Getenv("ENV"),
 	}
 }
