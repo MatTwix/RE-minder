@@ -5,6 +5,7 @@ import (
 
 	"github.com/MatTwix/RE-minder/config"
 	"github.com/MatTwix/RE-minder/database"
+	"github.com/MatTwix/RE-minder/routes"
 	"github.com/gofiber/fiber/v3"
 )
 
@@ -19,7 +20,7 @@ func main() {
 		//TODO: CORS allows for dev mode
 	}
 
-	// TODO: make routes setup
+	routes.SetupRoutes(app)
 
 	if cfg.ENV == "production" {
 		// TODO: react app static views from dist/ dir
