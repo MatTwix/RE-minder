@@ -1,6 +1,13 @@
 package models
 
+import "time"
+
 type User struct {
-	ID   int
-	Name string // TODO: change test model to the real one
+	ID           int       `json:"id"`
+	Username     string    `json:"username"`
+	Email        string    `json:"email"`
+	PasswordHash string    `json:"password_hash"`
+	TelegramId   *int      `json:"telegram_id,omitempty"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
