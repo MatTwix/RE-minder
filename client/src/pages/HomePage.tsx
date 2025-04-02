@@ -57,7 +57,7 @@ function HomePage() {
                     </CardContent>
                     <CardContent>
                         <Typography variant="body1">
-                            {habit.description != "" ? habit.description : "There is no description here("}
+                            {habit.description || "There is no description here("}
                         </Typography>
                     </CardContent>
                     <CardContent>
