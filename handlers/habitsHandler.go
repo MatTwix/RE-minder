@@ -50,12 +50,17 @@ func CreateHabit(c fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Incorrect data format: " + err.Error()})
 	}
 
+	timezone := habit.Timezone
+	if timezone == "" {
+		timezone = "UTC"
+	}
+
 	_, err := database.DB.Exec(context.Background(),
 		`INSERT INTO habits 
 		(user_id, name, description, frequency, remind_time, timezone) 
 		VALUES 
-		($1, $2, $3, $4, $5, $6)`,
-		habit.UserId, habit.Name, habit.Description, habit.Frequency, habit.RemindTime, habit.Timezone)
+		($1, $2, $3, $4, $5, COALESCE($6, 'UTC'))`,
+		habit.UserId, habit.Name, habit.Description, habit.Frequency, habit.RemindTime, timezone)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error creating habit: " + err.Error()})
 	}
