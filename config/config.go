@@ -8,11 +8,14 @@ import (
 )
 
 type Config struct {
-	Port      string
-	DbUrl     string
-	ENV       string
-	AppUrl    string
-	ReactPort string
+	Port       string
+	DbUser     string
+	DbPort     string
+	DbPassword string
+	DbName     string
+	ENV        string
+	AppUrl     string
+	ReactPort  string
 }
 
 func LoadConfig() Config {
@@ -28,10 +31,13 @@ func LoadConfig() Config {
 	}
 
 	return Config{
-		Port:      port,
-		DbUrl:     os.Getenv("DB_URL"),
-		ENV:       os.Getenv("ENV"),
-		AppUrl:    os.Getenv("APP_URL"),
-		ReactPort: os.Getenv("REACT_PORT"),
+		Port:       port,
+		DbUser:     os.Getenv("DB_USER"),
+		DbPassword: os.Getenv("DB_PASSWORD"),
+		DbPort:     os.Getenv("DB_PORT"),
+		DbName:     os.Getenv("DB_NAME"),
+		ENV:        os.Getenv("ENV"),
+		AppUrl:     os.Getenv("APP_URL"),
+		ReactPort:  os.Getenv("REACT_PORT"),
 	}
 }
