@@ -1,12 +1,17 @@
 # RE-minder
+
 Opensource Go Fiber + JS React + PostgreSQL project
+
 ## made by HSE student Fedorov Matvey
 
 ## I feel like I've forgot something..
+
 From this moment you will not.
 
 ## Database structure
+
 ### Users Table
+
 Stores user information.
 
 | Column        | Type      | Constraints                  |
@@ -22,6 +27,7 @@ Stores user information.
 ---
 
 ### Habits Table
+
 Stores user habits with reminders.
 
 | Column       | Type      | Constraints                                          |
