@@ -20,7 +20,7 @@ func GetUsers(c fiber.Ctx) error {
 
 	for rows.Next() {
 		var user models.User
-		if err := rows.Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.TelegramId, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		if err := rows.Scan(&user.ID, &user.Username, &user.TelegramId, &user.GithubId, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return c.Status(500).JSON(fiber.Map{"error": "Error parsing data: " + err.Error()})
 		}
 		users = append(users, user)
@@ -35,7 +35,7 @@ func GetUser(c fiber.Ctx) error {
 	var user models.User
 	err := database.DB.QueryRow(context.Background(),
 		"SELECT * FROM users WHERE id = $1", id).
-		Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.TelegramId, &user.CreatedAt, &user.UpdatedAt)
+		Scan(&user.ID, &user.Username, &user.GithubId, &user.TelegramId, &user.CreatedAt, &user.UpdatedAt)
 
 	if err != nil {
 		return c.Status(404).JSON(fiber.Map{"error": "User not found: " + err.Error()})
@@ -51,8 +51,8 @@ func CreateUser(c fiber.Ctx) error {
 	}
 
 	_, err := database.DB.Exec(context.Background(),
-		"INSERT INTO users (username, email, password_hash, telegram_id) VALUES ($1, $2, $3, $4)",
-		user.Username, user.Email, user.PasswordHash, user.TelegramId)
+		"INSERT INTO users (username, telegram_id, github_id) VALUES ($1, $2, $3)",
+		user.Username, user.TelegramId, user.GithubId)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error creating user: " + err.Error()})
 	}
@@ -70,9 +70,9 @@ func UpdateUser(c fiber.Ctx) error {
 
 	_, err := database.DB.Exec(context.Background(), `
 		UPDATE users 
-		SET username = $1, email = $2, password_hash = $3, telegram_id = $4, updated_at = NOW()
-		WHERE id = $5`,
-		user.Username, user.Email, user.PasswordHash, user.TelegramId, id)
+		SET username = $1, telegram_id = $2, github_id = $3, updated_at = NOW()
+		WHERE id = $4`,
+		user.Username, user.TelegramId, user.GithubId, id)
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error updating user: " + err.Error()})
