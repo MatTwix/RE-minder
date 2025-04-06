@@ -2,10 +2,20 @@ package routes
 
 import (
 	"github.com/MatTwix/RE-minder/handlers"
+	"github.com/MatTwix/RE-minder/middleware"
 	"github.com/gofiber/fiber/v3"
 )
 
 func SetupRoutes(app *fiber.App) {
+	auth := app.Group("/auth")
+
+	github := auth.Group("/github")
+	github.Get("/", middleware.RedirectToGithub)
+
+	app.Get("/auth/github/callback", middleware.GithubCallback)
+
+	github.Get("/callback", middleware.GithubCallback)
+
 	api := app.Group("/api")
 
 	users := api.Group("/users")
