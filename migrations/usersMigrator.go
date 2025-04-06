@@ -28,9 +28,8 @@ func CreateUsersTable(DB *pgxpool.Pool) {
 			CREATE TABLE users (
 				id SERIAL PRIMARY KEY,
 				username TEXT UNIQUE NOT NULL,
-				email TEXT UNIQUE NOT NULL,
-				password_hash TEXT NOT NULL,
 				telegram_id BIGINT UNIQUE,
+				github_id BIGINT UNIQUE NOT NULL,
 				created_at TIMESTAMP DEFAULT NOW(),
 				updated_at TIMESTAMP DEFAULT NOW()
 			);
