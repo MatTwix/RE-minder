@@ -19,7 +19,7 @@ Stores user information.
 | id            | SERIAL    | PRIMARY KEY                  |
 | username      | TEXT      | UNIQUE, NOT NULL             |
 | telegram_id   | BIGINT    | UNIQUE                       |
-| github_id     | BIGINT    | UNIQUE                       |
+| github_id     | BIGINT    | UNIQUE, NON NULL             |
 | created_at    | TIMESTAMP | DEFAULT NOW()                |
 | updated_at    | TIMESTAMP | DEFAULT NOW()                |
 
