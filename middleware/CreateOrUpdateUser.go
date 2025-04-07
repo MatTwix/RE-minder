@@ -15,12 +15,9 @@ func CreateOrUpdateUser(user *models.User) error {
 
 	if err != nil {
 		if err.Error() == "no rows in result set" {
-			githubEmail := ""
-			githubPassword := ""
-
 			_, err = database.DB.Exec(context.Background(), `
-				INSERT INTO users (github_id, username, email, password_hash)
-				VALUES ($1, $2, $3, $4)`, user.GithubId, user.Username, githubEmail, githubPassword)
+				INSERT INTO users (github_id, username)
+				VALUES ($1, $2)`, user.GithubId, user.Username)
 			if err != nil {
 				log.Println("Error creating new user:", err)
 				return err
