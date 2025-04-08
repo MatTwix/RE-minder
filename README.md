@@ -9,6 +9,39 @@ From this moment, you will not.
 
 ---
 
+## 🏗️ Project Structure
+
+```structure
+RE-minder/
+│
+├── config/                 # Application configuration settings
+├── database/              # Database connection and initialization logic
+├── handlers/              # API endpoint handlers for users and habits
+├── middleware/            # Custom middleware for authentication and user management
+├── migrations/            # Database schema and migration files
+├── models/                # Data models defining the application's entities
+├── routes/                # API route definitions and setup
+├── main.go               # Main application entry point
+├── go.mod                # Go module dependencies
+│
+└── client/               # Frontend React application
+    ├── src/              # Source code for the React application
+    │   ├── components/   # Reusable UI components
+    │   ├── pages/        # Page-level components
+    │   └── assets/       # Static assets (images, styles)
+    ├── public/           # Public static files
+    ├── package.json      # Frontend dependencies and scripts
+    └── vite.config.ts    # Vite build configuration
+```
+
+This structure represents a full-stack application with:
+
+- A Go backend providing the API and business logic
+- A React/TypeScript frontend for the user interface
+- Clear separation between backend and frontend concerns
+
+---
+
 ## 📦 Database Structure
 
 ### 🧑 Users Table
@@ -44,7 +77,7 @@ Stores user habits with reminders.
 
 ---
 
-## 🌐 API and Auth Endpoints
+## 🌐 API Endpoints
 
 Base URL: `http://localhost:3000/api`
 
@@ -52,7 +85,7 @@ Base URL: `http://localhost:3000/api`
 
 ### 1. 👤 Users `/users`
 
-#### Endpoints:
+#### Users endpoints
 
 - **Get all**  
   `GET /`
@@ -91,7 +124,7 @@ Base URL: `http://localhost:3000/api`
 
 ### 2. 🔁 Habits `/habits`
 
-#### Endpoints
+#### Habits endpoints
 
 - **Get all habits**  
   `GET /`
@@ -129,7 +162,13 @@ Base URL: `http://localhost:3000/api`
   }
   ```
 
-- **Delete habit by ID**  
+- **Delete habit by ID**
   `DELETE /:id`
 
 ---
+
+## 🔐 Auth
+
+### Redirect to Github Oauth page
+
+- `http://localhost:3000/auth/github`
