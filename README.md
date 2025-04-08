@@ -46,9 +46,10 @@ Stores user habits with reminders.
 ### API `http://localhost:3000/api`
 
 1. Users `+ /users`
-*Get all `/`,  metod: GET
-*Get one by id `/:id`,  metod: GET
-*Create one `/`,  method: POST,  body (json):  
+
+* Get all `/`,  metod: GET
+* Get one by id `/:id`,  metod: GET
+* Create one `/`,  method: POST,  body (json):  
 
 ```structure
    {
@@ -58,7 +59,7 @@ Stores user habits with reminders.
     }
 ```
 
-*Update one by id `/:id`,  method: PUT, body (json):  
+* Update one by id `/:id`,  method: PUT, body (json):  
 
 ```structure
     "username": "updated test username",
@@ -66,12 +67,13 @@ Stores user habits with reminders.
     "telegram_id": 12345678
 ```
 
-*Delete one by id `/:id`,  method: DELETE
+* Delete one by id `/:id`,  method: DELETE
 
 1. Habits `+ /habits`
-*Get all `/`,  metod: GET
-*Get one by id `/:id`,  metod: GET
-*Create one `/`,  method: POST,  body (json):  
+
+* Get all `/`,  metod: GET
+* Get one by id `/:id`,  metod: GET
+* Create one `/`,  method: POST,  body (json):  
 
 ```structure
 {
@@ -83,7 +85,7 @@ Stores user habits with reminders.
     "timezone": "MSK"
 }```
 
-*Update one by id `/:id`,  method: PUT, body (json):  
+* Update one by id `/:id`,  method: PUT, body (json):  
 
 ```sructure
     "user_id": 2,
@@ -94,4 +96,4 @@ Stores user habits with reminders.
     "timezone": "UPD"
 ```
 
-*Delete one by id `/:id`,  method: DELETE
+* Delete one by id `/:id`,  method: DELETE
