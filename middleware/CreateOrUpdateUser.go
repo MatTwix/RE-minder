@@ -13,6 +13,8 @@ func CreateOrUpdateUser(user *models.User) error {
 	err := database.DB.QueryRow(context.Background(), "SELECT id, github_id, username FROM users WHERE github_id=$1", user.GithubId).
 		Scan(&existingUser.ID, &existingUser.GithubId, &existingUser.Username)
 
+	//
+
 	if err != nil {
 		if err.Error() == "no rows in result set" {
 			_, err = database.DB.Exec(context.Background(), `
