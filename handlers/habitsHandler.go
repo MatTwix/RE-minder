@@ -5,25 +5,14 @@ import (
 
 	"github.com/MatTwix/RE-minder/database"
 	"github.com/MatTwix/RE-minder/models"
+	"github.com/MatTwix/RE-minder/services"
 	"github.com/gofiber/fiber/v3"
 )
 
 func GetHabits(c fiber.Ctx) error {
-	rows, err := database.DB.Query(context.Background(), "SELECT * FROM habits")
+	habits, err := services.GetHabits(c.Context())
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error while getting habits: " + err.Error()})
-	}
-
-	defer rows.Close()
-
-	var habits []models.Habit
-
-	for rows.Next() {
-		var habit models.Habit
-		if err := rows.Scan(&habit.ID, &habit.UserId, &habit.Name, &habit.Description, &habit.Frequency, &habit.RemindTime, &habit.Timezone, &habit.CreatedAt, &habit.UpdatedAt); err != nil {
-			return c.Status(500).JSON(fiber.Map{"error": "Error parsing data: " + err.Error()})
-		}
-		habits = append(habits, habit)
 	}
 
 	return c.JSON(habits)
