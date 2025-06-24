@@ -19,18 +19,21 @@ func GetHabits(c fiber.Ctx) error {
 }
 
 func GetHabit(c fiber.Ctx) error {
-	id := c.Params("id")
-
-	var habit models.Habit
-	err := database.DB.QueryRow(context.Background(),
-		"SELECT * FROM habits WHERE id = $1", id).
-		Scan(&habit.ID, &habit.UserId, &habit.Name, &habit.Description, &habit.Frequency, &habit.RemindTime, &habit.Timezone, &habit.CreatedAt, &habit.UpdatedAt)
+	habit, err := services.GetHabits(c.Context(), services.Condition{
+		Field:    "id",
+		Operator: services.Equal,
+		Value:    c.Params("id"),
+	})
 
 	if err != nil {
-		return c.Status(404).JSON(fiber.Map{"error": "Habit not found: " + err.Error()})
+		return c.Status(500).JSON(fiber.Map{"error": "Error while getting habit: " + err.Error()})
 	}
+	if len(habit) == 0 {
+		return c.Status(404).JSON(fiber.Map{"error": "Habit not found"})
+	}
+	singleHabit := habit[0]
 
-	return c.JSON(habit)
+	return c.JSON(singleHabit)
 }
 
 func CreateHabit(c fiber.Ctx) error {
