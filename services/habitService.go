@@ -36,3 +36,30 @@ func GetHabits(ctx context.Context, optCondition ...Condition) ([]models.Habit, 
 
 	return habits, nil
 }
+
+func CreateHabit(ctx context.Context, userId int, name, description, frequency, remindTime, timezone string) (models.Habit, error) {
+	if timezone == "" {
+		timezone = "UTC"
+	}
+
+	habit := models.Habit{
+		UserId:      userId,
+		Name:        name,
+		Description: description,
+		Frequency:   frequency,
+		RemindTime:  remindTime,
+		Timezone:    timezone,
+	}
+
+	_, err := database.DB.Exec(context.Background(),
+		`INSERT INTO habits 
+		(user_id, name, description, frequency, remind_time, timezone) 
+		VALUES 
+		($1, $2, $3, $4, $5, COALESCE($6, 'UTC'))`,
+		userId, name, description, frequency, remindTime, timezone)
+	if err != nil {
+		return habit, errors.New("Error creating habit: " + err.Error())
+	}
+
+	return habit, nil
+}
