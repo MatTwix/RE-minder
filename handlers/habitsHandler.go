@@ -1,9 +1,8 @@
 package handlers
 
 import (
-	"context"
+	"strconv"
 
-	"github.com/MatTwix/RE-minder/database"
 	"github.com/MatTwix/RE-minder/models"
 	"github.com/MatTwix/RE-minder/services"
 	"github.com/gofiber/fiber/v3"
@@ -42,50 +41,43 @@ func CreateHabit(c fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Incorrect data format: " + err.Error()})
 	}
 
-	timezone := habit.Timezone
-	if timezone == "" {
-		timezone = "UTC"
-	}
-
-	_, err := database.DB.Exec(context.Background(),
-		`INSERT INTO habits 
-		(user_id, name, description, frequency, remind_time, timezone) 
-		VALUES 
-		($1, $2, $3, $4, $5, COALESCE($6, 'UTC'))`,
-		habit.UserId, habit.Name, habit.Description, habit.Frequency, habit.RemindTime, timezone)
+	createdHabit, err := services.CreateHabit(c.Context(), habit.UserId, habit.Name, habit.Description, habit.Frequency, habit.RemindTime, habit.Timezone)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error creating habit: " + err.Error()})
 	}
 
-	return c.JSON(habit)
+	return c.JSON(createdHabit)
 }
 
 func UpdateHabit(c fiber.Ctx) error {
-	id := c.Params("id")
+	idRaw := c.Params("id")
+	id, err := strconv.Atoi(idRaw)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid habit ID: " + err.Error()})
+	}
+
 	habit := new(models.Habit)
 
 	if err := c.Bind().Body(habit); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Incorrect data format: " + err.Error()})
 	}
 
-	_, err := database.DB.Exec(context.Background(), `
-		UPDATE habits
-		SET user_id = $1, name = $2, description = $3, frequency = $4, remind_time = $5, timezone = $6, updated_at = NOW()
-		WHERE id = $7`,
-		habit.UserId, habit.Name, habit.Description, habit.Frequency, habit.RemindTime, habit.Timezone, id)
-
+	updatedHabit, err := services.UpdateHabit(c.Context(), id, habit.UserId, habit.Name, habit.Description, habit.Frequency, habit.RemindTime, habit.Timezone)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error updating habit: " + err.Error()})
 	}
 
-	return c.JSON(fiber.Map{"message": "Habit seccesfully updated"})
+	return c.JSON(updatedHabit)
 }
 
 func DeleteHabit(c fiber.Ctx) error {
-	id := c.Params("id")
-
-	_, err := database.DB.Exec(context.Background(), "DELETE FROM habits WHERE id = $1", id)
+	idRaw := c.Params("id")
+	id, err := strconv.Atoi(idRaw)
 	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid habit ID: " + err.Error()})
+	}
+
+	if err := services.DeleteHabit(c.Context(), id); err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error deleting habit: " + err.Error()})
 	}
 
