@@ -7,6 +7,8 @@ import (
 
 	"github.com/MatTwix/RE-minder/database"
 	"github.com/MatTwix/RE-minder/models"
+
+	"github.com/jackc/pgx/v5"
 )
 
 func GetHabits(ctx context.Context, optCondition ...Condition) ([]models.Habit, error) {
@@ -79,17 +81,18 @@ func UpdateHabit(ctx context.Context, id int, userId int, name, description, fre
 		Timezone:    timezone,
 	}
 
-	result, err := database.DB.Exec(ctx, `
+	err := database.DB.QueryRow(ctx, `
 		UPDATE habits
 		SET user_id = $1, name = $2, description = $3, frequency = $4, remind_time = $5, timezone = COALESCE($6, 'UTC'), updated_at = NOW()
-		WHERE id = $7`, userId, name, description, frequency, remindTime, timezone, id)
-	if err != nil {
-		return habit, errors.New("Error updating habit: " + err.Error())
-	}
+		WHERE id = $7
+		RETURNING created_at, updated_at`,
+		userId, name, description, frequency, remindTime, timezone, id).Scan(&habit.CreatedAt, &habit.UpdatedAt)
 
-	rowsAffected := result.RowsAffected()
-	if rowsAffected == 0 {
-		return habit, errors.New("habit not found or no changes made")
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return habit, errors.New("habit not found")
+		}
+		return habit, errors.New("Error updating habit: " + err.Error())
 	}
 
 	return habit, nil
