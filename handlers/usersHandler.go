@@ -67,6 +67,83 @@ func UpdateUser(c fiber.Ctx) error {
 	return c.JSON(updatedUser)
 }
 
+func SetTelegramID(c fiber.Ctx) error {
+	idRaw := c.Params("id")
+	id, err := strconv.Atoi(idRaw)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid user ID: " + err.Error()})
+	}
+
+	var requestBody struct {
+		TelegramId int `json:"telegram_id"`
+	}
+
+	if err := c.Bind().Body(&requestBody); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Incorrect data format: " + err.Error()})
+	}
+
+	if requestBody.TelegramId <= 0 {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid Telegram ID"})
+	}
+
+	existingUser, err := services.GetUsers(c.Context(), services.Condition{
+		Field:    "id",
+		Operator: services.Equal,
+		Value:    id,
+	})
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Error while getting user: " + err.Error()})
+	}
+
+	if len(existingUser) == 0 {
+		return c.Status(404).JSON(fiber.Map{"error": "User not found"})
+	}
+
+	singleUser := existingUser[0]
+
+	updatedUser, err := services.UpdateUser(c.Context(), id, singleUser.Username, &requestBody.TelegramId, singleUser.GithubId)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Error updating user: " + err.Error()})
+	}
+	return c.JSON(updatedUser)
+}
+
+func SwapUserStatus(c fiber.Ctx) error {
+	idRaw := c.Params("id")
+	id, err := strconv.Atoi(idRaw)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid user ID: " + err.Error()})
+	}
+
+	user, err := services.GetUsers(c.Context(), services.Condition{
+		Field:    "id",
+		Operator: services.Equal,
+		Value:    id,
+	})
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Error while getting user: " + err.Error()})
+	}
+
+	if len(user) == 0 {
+		return c.Status(404).JSON(fiber.Map{"error": "User not found"})
+	}
+
+	singleUser := user[0]
+
+	isAdmin := !singleUser.IsAdmin
+
+	updatedUser, err := services.SetUserStatus(c.Context(), id, isAdmin)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Error updating user: " + err.Error()})
+	}
+
+	updatedUser.IsAdmin = isAdmin
+
+	return c.JSON(updatedUser)
+}
+
 func DeleteUser(c fiber.Ctx) error {
 	idRaw := c.Params("id")
 	id, err := strconv.Atoi(idRaw)

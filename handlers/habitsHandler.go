@@ -17,6 +17,21 @@ func GetHabits(c fiber.Ctx) error {
 	return c.JSON(habits)
 }
 
+func GetUserHabits(c fiber.Ctx) error {
+	userIDRaw := c.Params("id")
+	userID, err := strconv.Atoi(userIDRaw)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid user ID: " + err.Error()})
+	}
+
+	habits, err := services.GetUserHabits(c, userID)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Error while getting user habits: " + err.Error()})
+	}
+
+	return c.JSON(habits)
+}
+
 func GetHabit(c fiber.Ctx) error {
 	habit, err := services.GetHabits(c.Context(), services.Condition{
 		Field:    "id",
@@ -41,7 +56,15 @@ func CreateHabit(c fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Incorrect data format: " + err.Error()})
 	}
 
-	createdHabit, err := services.CreateHabit(c.Context(), habit.UserId, habit.Name, habit.Description, habit.Frequency, habit.RemindTime, habit.Timezone)
+	userIDRaw := c.Locals("user_id")
+	userID, ok := userIDRaw.(int)
+	if !ok {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid user ID"})
+	}
+
+	habit.UserId = userID
+
+	createdHabit, err := services.CreateHabit(c.Context(), habit.UserId, habit.Name, habit.Description, habit.Frequency, habit.RemindTime, habit.Timezone, habit.StartDate)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error creating habit: " + err.Error()})
 	}
@@ -62,7 +85,7 @@ func UpdateHabit(c fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Incorrect data format: " + err.Error()})
 	}
 
-	updatedHabit, err := services.UpdateHabit(c.Context(), id, habit.UserId, habit.Name, habit.Description, habit.Frequency, habit.RemindTime, habit.Timezone)
+	updatedHabit, err := services.UpdateHabit(c.Context(), id, habit.Name, habit.Description, habit.Frequency, habit.RemindTime, habit.Timezone)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error updating habit: " + err.Error()})
 	}
