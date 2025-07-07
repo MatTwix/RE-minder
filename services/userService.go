@@ -44,9 +44,13 @@ func CreateUser(ctx context.Context, username string, telegramId *int, githubId 
 		GithubId:   githubId,
 	}
 
-	err := database.DB.QueryRow(ctx,
-		"INSERT INTO users (username, telegram_id, github_id) VALUES ($1, $2, $3) RETURNING id, created_at, updated_at",
-		username, telegramId, githubId).Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt)
+	err := database.DB.QueryRow(ctx, `
+		INSERT INTO users 
+		(username, telegram_id, github_id) 
+		VALUES 
+		($1, $2, $3) 
+		RETURNING id, is_admin, created_at, updated_at`,
+		username, telegramId, githubId).Scan(&user.ID, &user.IsAdmin, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		return user, errors.New("Error creating user: " + err.Error())
 	}
@@ -66,8 +70,8 @@ func UpdateUser(ctx context.Context, id int, username string, telegramId *int, g
 		UPDATE users 
 		SET username = $1, telegram_id = $2, github_id = $3, updated_at = NOW() 
 		WHERE id = $4
-		RETURNING created_at, updated_at`,
-		username, telegramId, githubId, id).Scan(&user.CreatedAt, &user.UpdatedAt)
+		RETURNING is_admin, created_at, updated_at`,
+		username, telegramId, githubId, id).Scan(&user.IsAdmin, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return user, errors.New("user not found")
@@ -79,7 +83,7 @@ func UpdateUser(ctx context.Context, id int, username string, telegramId *int, g
 }
 
 func CreateOrUpdateUser(user *models.User) (models.User, error) {
-	var existingUserSingle models.User
+	var finalUser models.User
 
 	existingUser, err := GetUsers(context.Background(), Condition{
 		Field:    "github_id",
@@ -88,22 +92,22 @@ func CreateOrUpdateUser(user *models.User) (models.User, error) {
 	})
 
 	if err != nil {
-		return existingUserSingle, errors.New("Error checking existing user:" + err.Error())
+		return finalUser, errors.New("Error checking existing user:" + err.Error())
 	}
 
 	if len(existingUser) == 0 {
-		_, err = CreateUser(context.Background(), user.Username, nil, user.GithubId)
+		finalUser, err := CreateUser(context.Background(), user.Username, nil, user.GithubId)
 		if err != nil {
-			return existingUserSingle, errors.New("Error creating new user: " + err.Error())
+			return finalUser, errors.New("Error creating new user: " + err.Error())
 		}
 	} else {
-		_, err = UpdateUser(context.Background(), existingUser[0].ID, user.Username, nil, user.GithubId)
+		finalUser, err = UpdateUser(context.Background(), existingUser[0].ID, user.Username, nil, user.GithubId)
 		if err != nil {
-			return existingUserSingle, errors.New("Error updating user: " + err.Error())
+			return finalUser, errors.New("Error updating user: " + err.Error())
 		}
 	}
 
-	return existingUserSingle, nil
+	return finalUser, nil
 }
 
 func SetUserStatus(ctx context.Context, id int, isAdmin bool) (models.User, error) {
