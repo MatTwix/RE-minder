@@ -18,24 +18,24 @@ func main() {
 	database.ConnectDB()
 	defer database.DB.Close()
 
-	if cfg.ENV != "production" {
-		originUrl := fmt.Sprintf("%s:%s", cfg.AppUrl, cfg.ReactPort)
-
-		app.Use(cors.New(cors.Config{
-			AllowOrigins:     []string{originUrl},
-			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
-			AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"},
-			AllowCredentials: true,
-			ExposeHeaders:    []string{"Content-Length"},
-			MaxAge:           86400,
-		}))
+	allowedOrigins := []string{
+		fmt.Sprintf("%s:%s", cfg.FrontendUrlProd, cfg.FrontendPortProd),
 	}
+
+	if cfg.FrontendEnv != "production" {
+		allowedOrigins = append(allowedOrigins, fmt.Sprintf("%s:%s", cfg.FrontendUrlDev, cfg.FrontendPortDev))
+	}
+
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     allowedOrigins,
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"},
+		AllowCredentials: true,
+		ExposeHeaders:    []string{"Content-Length"},
+		MaxAge:           86400,
+	}))
 
 	routes.SetupRoutes(app)
-
-	if cfg.ENV == "production" {
-		// TODO: react app static views from dist/ dir
-	}
 
 	if err := app.Listen(":" + cfg.Port); err != nil {
 		log.Fatal("Error starting server: ", err)
