@@ -42,6 +42,18 @@ func GetHabits(ctx context.Context, optCondition ...Condition) ([]models.Habit, 
 }
 
 func GetUserHabits(c fiber.Ctx, userId int) ([]models.Habit, error) {
+	existingUser, err := GetUsers(c.Context(), Condition{
+		Field:    "id",
+		Operator: Equal,
+		Value:    userId,
+	})
+	if err != nil {
+		return nil, errors.New("Error while getting user: " + err.Error())
+	}
+	if len(existingUser) == 0 {
+		return nil, errors.New("user not found")
+	}
+
 	habits, err := GetHabits(c.Context(), Condition{
 		Field:    "user_id",
 		Operator: Equal,
