@@ -20,7 +20,7 @@ func GetUsers(ctx context.Context, optCondition ...Condition) ([]models.User, er
 
 	var users []models.User
 
-	rows, err := database.DB.Query(ctx, "SELECT * FROM users "+whereStatement, args...)
+	rows, err := database.DB.Query(ctx, "SELECT id, username, telegram_id, github_id, is_admin, created_at, updated_at FROM users "+whereStatement, args...)
 	if err != nil {
 		return users, errors.New("Error while getting users: " + err.Error())
 	}
@@ -28,7 +28,7 @@ func GetUsers(ctx context.Context, optCondition ...Condition) ([]models.User, er
 
 	for rows.Next() {
 		var user models.User
-		if err := rows.Scan(&user.ID, &user.Username, &user.TelegramId, &user.GithubId, &user.CreatedAt, &user.UpdatedAt, &user.IsAdmin); err != nil {
+		if err := rows.Scan(&user.ID, &user.Username, &user.TelegramId, &user.GithubId, &user.IsAdmin, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return users, errors.New("Error parsing data: " + err.Error())
 		}
 		users = append(users, user)

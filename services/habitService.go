@@ -24,7 +24,7 @@ func GetHabits(ctx context.Context, optCondition ...Condition) ([]models.Habit, 
 	var habits []models.Habit
 
 	rows, err := database.DB.Query(ctx, fmt.Sprintf(
-		"SELECT * FROM habits %s", whereStatement), args...)
+		"SELECT id, user_id, name, description, frequency, remind_time, start_date, timezone, created_at, updated_at FROM habits %s", whereStatement), args...)
 	if err != nil {
 		return habits, errors.New("Error while getting habits: " + err.Error())
 	}
@@ -32,7 +32,7 @@ func GetHabits(ctx context.Context, optCondition ...Condition) ([]models.Habit, 
 
 	for rows.Next() {
 		var habit models.Habit
-		if err := rows.Scan(&habit.ID, &habit.UserId, &habit.Name, &habit.Description, &habit.Frequency, &habit.RemindTime, &habit.Timezone, &habit.CreatedAt, &habit.UpdatedAt, &habit.StartDate); err != nil {
+		if err := rows.Scan(&habit.ID, &habit.UserId, &habit.Name, &habit.Description, &habit.Frequency, &habit.RemindTime, &habit.StartDate, &habit.Timezone, &habit.CreatedAt, &habit.UpdatedAt); err != nil {
 			return habits, errors.New("Error parsing data: " + err.Error())
 		}
 		habits = append(habits, habit)
