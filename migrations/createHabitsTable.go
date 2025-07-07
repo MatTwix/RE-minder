@@ -33,8 +33,8 @@ func CreateHabitsTable(DB *pgxpool.Pool) {
 				frequency TEXT NOT NULL CHECK (frequency IN ('daily', 'weekly', 'monthly')),  
 				remind_time TIME NOT NULL,
 				timezone TEXT NOT NULL DEFAULT 'UTC',
-				created_at TIMESTAMP DEFAULT NOW(),
-				updated_at TIMESTAMP DEFAULT NOW(),
+				created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+				updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
 				CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 			);
 		`)

@@ -27,8 +27,8 @@ func CreateUsersTable(DB *pgxpool.Pool) {
 		_, err = tx.Exec(ctx, `
 			CREATE TABLE users (
 				id SERIAL PRIMARY KEY,
-				username TEXT UNIQUE NOT NULL,
-				telegram_id BIGINT UNIQUE,
+				username TEXT NOT NULL,
+				telegram_id BIGINT,
 				github_id BIGINT UNIQUE NOT NULL,
 				created_at TIMESTAMP DEFAULT NOW(),
 				updated_at TIMESTAMP DEFAULT NOW()

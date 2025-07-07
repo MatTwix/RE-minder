@@ -6,12 +6,11 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"time"
 
 	"github.com/MatTwix/RE-minder/config"
 	"github.com/MatTwix/RE-minder/models"
+	"github.com/MatTwix/RE-minder/services"
 	"github.com/gofiber/fiber/v3"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 const githubTokenURL = "https://github.com/login/oauth/access_token"
@@ -20,7 +19,8 @@ const githubUserURL = "https://api.github.com/user"
 var cfg = config.LoadConfig()
 
 func RedirectToGithub(c fiber.Ctx) error {
-	url := fmt.Sprintf("https://github.com/login/oauth/authorize?client_id=%s", cfg.GithubClient)
+	url := fmt.Sprintf(
+		"https://github.com/login/oauth/authorize?client_id=%s", cfg.GithubClient)
 	return c.Redirect().To(url)
 }
 
@@ -54,11 +54,9 @@ func GithubCallback(c fiber.Ctx) error {
 
 	req, _ := http.NewRequest("GET", githubUserURL, nil)
 	req.Header.Set("Authorization", "Bearer "+accessToken)
-	fmt.Print(accessToken)
 
 	client := &http.Client{}
 	userResp, err := client.Do(req)
-
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error getting user data: " + err.Error()})
 	}
@@ -78,17 +76,12 @@ func GithubCallback(c fiber.Ctx) error {
 		Username: githubUser.Login,
 	}
 
-	if err := CreateOrUpdateUser(user); err != nil {
+	currUser, err := services.CreateOrUpdateUser(user)
+	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error saving user to DB: " + err.Error()})
 	}
 
-	claims := jwt.MapClaims{
-		"sub": githubUser.ID,
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString([]byte(cfg.JWTSecret))
+	signedToken, err := GenerateJWT(currUser)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error signing token: " + err.Error()})
 	}

@@ -8,20 +8,21 @@ import (
 )
 
 type Config struct {
-	ENV    string
-	AppUrl string
-	Port   string
+	ENV  string
+	Port string
 
-	DbUser     string
-	DbPort     string
-	DbPassword string
-	DbName     string
+	DBUrl string
 
-	ReactPort string
+	FrontendEnv string
+
+	FrontendUrlDev  string
+	FrontendPortDev string
+
+	FrontendUrlProd  string
+	FrontendPortProd string
 
 	GithubClient       string
 	GithubClientSecret string
-	GithubRedirectUrl  string
 	JWTSecret          string
 }
 
@@ -38,20 +39,21 @@ func LoadConfig() Config {
 	}
 
 	return Config{
-		Port:   port,
-		ENV:    os.Getenv("ENV"),
-		AppUrl: os.Getenv("APP_URL"),
+		Port: port,
+		ENV:  os.Getenv("ENV"),
 
-		DbUser:     os.Getenv("DB_USER"),
-		DbPassword: os.Getenv("DB_PASSWORD"),
-		DbPort:     os.Getenv("DB_PORT"),
-		DbName:     os.Getenv("DB_NAME"),
+		DBUrl: os.Getenv("DB_URL"),
 
-		ReactPort: os.Getenv("REACT_PORT"),
+		FrontendEnv: os.Getenv("FRONTEND_ENV"),
+
+		FrontendUrlDev:  os.Getenv("FRONTEND_URL_DEV"),
+		FrontendPortDev: os.Getenv("FRONTEND_PORT_DEV"),
+
+		FrontendUrlProd:  os.Getenv("FRONTEND_URL_PROD"),
+		FrontendPortProd: os.Getenv("FRONTEND_PORT_PROD"),
 
 		GithubClient:       os.Getenv("GITHUB_CLIENT"),
 		GithubClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
-		GithubRedirectUrl:  os.Getenv("GITHUB_REDIRECT_URL"),
 		JWTSecret:          os.Getenv("JWT_SECRET"),
 	}
 }

@@ -38,6 +38,7 @@ tmp/
 /bin/  
 
 # 🎨 Editors files
+/.vscode
 /.vscode/*  
 /.devcontainer/*
 !.vscode/extensions.json  

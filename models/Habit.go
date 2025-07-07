@@ -10,6 +10,7 @@ type Habit struct {
 	Frequency   string    `json:"frequency"`
 	RemindTime  string    `json:"remind_time"`
 	Timezone    string    `json:"timezone"`
+	StartDate   time.Time `json:"start_date"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
 }
