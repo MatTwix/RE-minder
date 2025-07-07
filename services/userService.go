@@ -79,13 +79,13 @@ func UpdateUser(ctx context.Context, id int, username string, telegramId *int, g
 }
 
 func CreateOrUpdateUser(user *models.User) (models.User, error) {
+	var existingUserSingle models.User
+
 	existingUser, err := GetUsers(context.Background(), Condition{
 		Field:    "github_id",
 		Operator: Equal,
 		Value:    user.GithubId,
 	})
-
-	existingUserSingle := existingUser[0]
 
 	if err != nil {
 		return existingUserSingle, errors.New("Error checking existing user:" + err.Error())
