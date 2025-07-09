@@ -2,11 +2,21 @@ package handlers
 
 import (
 	"strconv"
+	"time"
 
-	"github.com/MatTwix/RE-minder/models"
+	"github.com/MatTwix/RE-minder/config"
 	"github.com/MatTwix/RE-minder/services"
 	"github.com/gofiber/fiber/v3"
 )
+
+type habitsInput struct {
+	Name        string    `json:"name" validate:"required,min=2,max=64"`
+	Description string    `json:"description,omitempty" validate:"max=256"`
+	Frequency   string    `json:"frequency" validate:"required,oneof=daily weekly monthly"`
+	RemindTime  string    `json:"remind_time" validate:"required,datetime=15:04:00"`
+	Timezone    string    `json:"timezone" validate:"required"`
+	StartDate   time.Time `json:"start_date" validate:"required"`
+}
 
 func GetHabits(c fiber.Ctx) error {
 	habits, err := services.GetHabits(c.Context())
@@ -51,9 +61,14 @@ func GetHabit(c fiber.Ctx) error {
 }
 
 func CreateHabit(c fiber.Ctx) error {
-	habit := new(models.Habit)
-	if err := c.Bind().Body(habit); err != nil {
+	var input habitsInput
+
+	if err := c.Bind().Body(&input); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Incorrect data format: " + err.Error()})
+	}
+
+	if err := config.Validator.Struct(&input); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Validation error: " + err.Error()})
 	}
 
 	userIDRaw := c.Locals("user_id")
@@ -62,9 +77,7 @@ func CreateHabit(c fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid user ID"})
 	}
 
-	habit.UserId = userID
-
-	createdHabit, err := services.CreateHabit(c.Context(), habit.UserId, habit.Name, habit.Description, habit.Frequency, habit.RemindTime, habit.Timezone, habit.StartDate)
+	createdHabit, err := services.CreateHabit(c.Context(), userID, input.Name, input.Description, input.Frequency, input.RemindTime, input.Timezone, input.StartDate)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error creating habit: " + err.Error()})
 	}
@@ -79,13 +92,17 @@ func UpdateHabit(c fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid habit ID: " + err.Error()})
 	}
 
-	habit := new(models.Habit)
+	var input habitsInput
 
-	if err := c.Bind().Body(habit); err != nil {
+	if err := c.Bind().Body(&input); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Incorrect data format: " + err.Error()})
 	}
 
-	updatedHabit, err := services.UpdateHabit(c.Context(), id, habit.Name, habit.Description, habit.Frequency, habit.RemindTime, habit.Timezone)
+	if err := config.Validator.Struct(&input); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Validation error: " + err.Error()})
+	}
+
+	updatedHabit, err := services.UpdateHabit(c.Context(), id, input.Name, input.Description, input.Frequency, input.RemindTime, input.Timezone)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error updating habit: " + err.Error()})
 	}

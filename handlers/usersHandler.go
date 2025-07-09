@@ -3,10 +3,16 @@ package handlers
 import (
 	"strconv"
 
-	"github.com/MatTwix/RE-minder/models"
+	"github.com/MatTwix/RE-minder/config"
 	"github.com/MatTwix/RE-minder/services"
 	"github.com/gofiber/fiber/v3"
 )
+
+type usersInput struct {
+	Username   string `json:"username" validate:"required,min=1,max=39"`
+	TelegramId *int   `json:"telegram_id,omitempty" validate:"omitempty,min=1"`
+	GithubId   *int   `json:"github_id,omitempty" validate:"omitempty,min=1"`
+}
 
 func GetUsers(c fiber.Ctx) error {
 	users, err := services.GetUsers(c.Context())
@@ -34,12 +40,17 @@ func GetUser(c fiber.Ctx) error {
 }
 
 func CreateUser(c fiber.Ctx) error {
-	user := new(models.User)
-	if err := c.Bind().Body(user); err != nil {
+	var input usersInput
+
+	if err := c.Bind().Body(&input); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Incorrect data format: " + err.Error()})
 	}
 
-	createdUser, err := services.CreateUser(c.Context(), user.Username, user.TelegramId, user.GithubId)
+	if err := config.Validator.Struct(&input); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Validation error: " + err.Error()})
+	}
+
+	createdUser, err := services.CreateUser(c.Context(), input.Username, input.TelegramId, input.GithubId)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error creating user: " + err.Error()})
 	}
@@ -54,13 +65,17 @@ func UpdateUser(c fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid user ID: " + err.Error()})
 	}
 
-	user := new(models.User)
+	var input usersInput
 
-	if err := c.Bind().Body(user); err != nil {
+	if err := c.Bind().Body(&input); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Incorrect data format: " + err.Error()})
 	}
 
-	updatedUser, err := services.UpdateUser(c.Context(), id, user.Username, user.TelegramId, user.GithubId)
+	if err := config.Validator.Struct(&input); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Validation error: " + err.Error()})
+	}
+
+	updatedUser, err := services.UpdateUser(c.Context(), id, input.Username, input.TelegramId, input.GithubId)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error updating user: " + err.Error()})
 	}
