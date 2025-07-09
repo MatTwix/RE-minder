@@ -43,6 +43,5 @@ func AddStartDateField(DB *pgxpool.Pool) {
 		log.Println("start_date field successfully added to habits table!")
 	} else {
 		tx.Rollback(ctx)
-		log.Println("start_date field already exists in habits table.")
 	}
 }

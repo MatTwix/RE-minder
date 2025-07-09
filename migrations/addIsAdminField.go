@@ -43,6 +43,5 @@ func AddIsAdminField(DB *pgxpool.Pool) {
 		log.Println("is_admin field successfully added to users table!")
 	} else {
 		tx.Rollback(ctx)
-		log.Println("is_admin field already exists in users table.")
 	}
 }
