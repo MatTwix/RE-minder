@@ -29,10 +29,8 @@ func main() {
 		allowedOrigins = append(allowedOrigins, fmt.Sprintf("%s:%s", cfg.FrontendUrlDev, cfg.FrontendPortDev))
 	}
 
-	fmt.Print("Allowed Origins: " + fmt.Sprintf("%v", allowedOrigins))
-
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowOrigins:     allowedOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"},
 		AllowCredentials: true,
