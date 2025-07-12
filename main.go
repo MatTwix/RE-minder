@@ -22,12 +22,14 @@ func main() {
 	defer database.DB.Close()
 
 	allowedOrigins := []string{
-		fmt.Sprintf("%s:%s", cfg.FrontendUrlProd, cfg.FrontendPortProd),
+		cfg.FrontendUrlProd,
 	}
 
 	if cfg.FrontendEnv != "production" {
 		allowedOrigins = append(allowedOrigins, fmt.Sprintf("%s:%s", cfg.FrontendUrlDev, cfg.FrontendPortDev))
 	}
+
+	log.Print("Allowed origins: ", allowedOrigins)
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     allowedOrigins,
