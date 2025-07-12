@@ -38,7 +38,7 @@ func main() {
 		MaxAge:           86400,
 	}))
 
-	if cfg.ENV == "production" {
+	if cfg.RateLimiterEnabled {
 		app.Use(limiter.New(limiter.Config{
 			Max:        200,
 			Expiration: 60 * 1000,

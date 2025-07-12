@@ -8,8 +8,9 @@ import (
 )
 
 type Config struct {
-	ENV  string
-	Port string
+	ENV                string
+	Port               string
+	RateLimiterEnabled bool
 
 	DBUrl string
 
@@ -39,8 +40,9 @@ func LoadConfig() Config {
 	}
 
 	return Config{
-		Port: port,
-		ENV:  os.Getenv("ENV"),
+		Port:               port,
+		ENV:                os.Getenv("ENV"),
+		RateLimiterEnabled: os.Getenv("RATE_LIMITER_ENABLED") == "true",
 
 		DBUrl: os.Getenv("DB_URL"),
 
