@@ -15,7 +15,7 @@ type habitsInput struct {
 	Frequency   string    `json:"frequency" validate:"required,oneof=daily weekly monthly"`
 	RemindTime  string    `json:"remind_time" validate:"required"`
 	Timezone    string    `json:"timezone" validate:"required"`
-	StartDate   time.Time `json:"start_date" validate:"required"`
+	StartDate   time.Time `json:"start_date,omitempty"`
 }
 
 func GetHabits(c fiber.Ctx) error {

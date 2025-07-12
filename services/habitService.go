@@ -83,6 +83,10 @@ func CreateHabit(ctx context.Context, userId int, name, description, frequency, 
 		timezone = "UTC"
 	}
 
+	if startDate.IsZero() {
+		startDate = time.Now().In(time.FixedZone(timezone, 0))
+	}
+
 	habit := models.Habit{
 		UserId:      userId,
 		Name:        name,
