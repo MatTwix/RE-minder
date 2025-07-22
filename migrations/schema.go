@@ -8,4 +8,5 @@ func Migrate(db *pgxpool.Pool) {
 	AddIsAdminField(db)
 	AddStartDateField(db)
 	CreateNotificationSettingsTable(db)
+	MakeUserIdFieldUniqueNotificationsSettingsTable(db)
 }

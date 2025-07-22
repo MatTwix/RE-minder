@@ -33,4 +33,8 @@ func SetupRoutes(app *fiber.App) {
 	habits.Post("/", handlers.CreateHabit, middleware.JWTMiddleware())
 	habits.Put("/:id", handlers.UpdateHabit, middleware.JWTMiddleware(), middleware.IsCreatorOrAdmin())
 	habits.Delete("/:id", handlers.DeleteHabit, middleware.JWTMiddleware(), middleware.IsCreatorOrAdmin())
+
+	notificationsSettings := api.Group("/notification_settings")
+	notificationsSettings.Get("/user/:id", handlers.GetUserNotificationSettings, middleware.JWTMiddleware(), middleware.IsSelfOrAdmin())
+	notificationsSettings.Put("/user/:id", handlers.UpdateUserNotificationSettings, middleware.JWTMiddleware(), middleware.IsSelfOrAdmin())
 }
