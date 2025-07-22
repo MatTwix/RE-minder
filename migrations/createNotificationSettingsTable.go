@@ -7,17 +7,17 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func CreateNotificationsTable(DB *pgxpool.Pool) {
+func CreateNotificationSettingsTable(DB *pgxpool.Pool) {
 	ctx := context.Background()
 	tx, err := DB.Begin(ctx)
 	if err != nil {
-		log.Fatal("Error creating notifications table: " + err.Error())
+		log.Fatal("Error creating notifications_settings table: " + err.Error())
 	}
 	defer tx.Rollback(ctx)
 
 	var tableExists bool
 	err = tx.QueryRow(ctx,
-		"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'notifications');").
+		"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'notifications_settings');").
 		Scan(&tableExists)
 	if err != nil {
 		log.Fatal("Error while checking notifications table: " + err.Error())
@@ -25,7 +25,7 @@ func CreateNotificationsTable(DB *pgxpool.Pool) {
 
 	if !tableExists {
 		_, err = tx.Exec(ctx, `
-			CREATE TABLE notifications (
+			CREATE TABLE notifications_settings (
 				id SERIAL PRIMARY KEY,
 				user_id INTEGER NOT NULL,
 				telegram_notification BOOLEAN NOT NULL DEFAULT FALSE,
@@ -45,7 +45,7 @@ func CreateNotificationsTable(DB *pgxpool.Pool) {
 			log.Fatal("Error committing transaction: ", err)
 		}
 
-		log.Println("Notifications table successfully created!")
+		log.Println("Notifications settings table successfully created!")
 	} else {
 		tx.Rollback(ctx)
 	}
