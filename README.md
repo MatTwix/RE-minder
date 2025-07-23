@@ -62,7 +62,7 @@ RE-minder/
 
 Base URL: `/api`
 
-### Authentication
+### User API Authentication
 
 All API endpoints require a `Bearer` token in the `Authorization` header.
 
@@ -393,6 +393,92 @@ Deletes a habit.
     {
       "message": "Habit succesfully deleted"
     }
+  ```
+
+---
+
+### ⚙️ Notification Settings
+
+#### `GET /api/notifications_settings/user/:id`
+
+Retrieves the notification settings for a specific user.
+
+- **Access:** Admin or the user themselves.
+- **Success Response (200)**
+
+  ```json
+  {
+    "id": 1,
+    "user_id": 1,
+    "telegram_notification": true,
+    "discord_notification": false,
+    "vk_notification": false,
+    "created_at": "2025-07-22T10:00:00Z",
+    "updated_at": "2025-07-22T10:00:00Z"
+  }
+  ```
+
+#### `PUT /api/notifications_settings/user/:id`
+
+Updates the notification settings for a specific user.
+
+- **Access:** Admin or the user themselves.
+- **Request Body**
+
+  ```json
+  {
+    "telegram_notification": true,
+    "discord_notification": true,
+    "vk_notification": false
+  }
+  ```
+
+- **Success Response (200)**
+
+  ```json
+  {
+    "id": 1,
+    "user_id": 1,
+    "telegram_notification": true,
+    "discord_notification": true,
+    "vk_notification": false,
+    ...
+  }
+  ```
+
+---
+
+## 🤖 Internal API
+
+Endpoints intended for service-to-service communication (e.g., with a notification bot).
+
+### Internal API Authentication
+
+All Internal API endpoints require an `ApiKey` token in the `Authorization` header. The `INTERNAL_API_KEY` must be set in the environment variables.
+
+**Example Header:**
+`Authorization: ApiKey your_super_secret_and_long_random_string`
+
+---
+
+### ⚙️ Notification Settings (Internal)
+
+#### `GET /internal/notifications_settings/user/:id`
+
+Retrieves the notification settings for a specific user. This endpoint is intended for use by internal services like a notification bot to check a user's delivery preferences.
+
+- **Access:** Any authenticated internal service.
+- **Success Response (200)**
+
+  ```json
+  {
+    "id": 1,
+    "user_id": 1,
+    "telegram_notification": true,
+    "discord_notification": false,
+    "vk_notification": false,
+    ...
+  }
   ```
 
 ## 🛠️ Technologies Used
