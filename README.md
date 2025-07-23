@@ -56,6 +56,18 @@ RE-minder/
 | created_at  | TIMESTAMP | DEFAULT NOW()                                                  |
 | updated_at  | TIMESTAMP | DEFAULT NOW()                                                  |
 
+### ⚙️ Notification Settings Table
+
+| Column                | Type      | Constraints                                      |
+|-----------------------|-----------|--------------------------------------------------|
+| id                    | SERIAL    | PRIMARY KEY                                      |
+| user_id               | INTEGER   | NOT NULL, UNIQUE, REFERENCES users(id) ON DELETE CASCADE |
+| telegram_notification | BOOLEAN   | NOT NULL, DEFAULT FALSE                          |
+| discord_notification  | BOOLEAN   | NOT NULL, DEFAULT FALSE                          |
+| vk_notification       | BOOLEAN   | NOT NULL, DEFAULT FALSE                          |
+| created_at            | TIMESTAMP | NOT NULL, DEFAULT NOW()                          |
+| updated_at            | TIMESTAMP | NOT NULL, DEFAULT NOW()                          |
+
 ---
 
 ## 🌐 API Endpoints
