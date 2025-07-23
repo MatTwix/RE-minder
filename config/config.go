@@ -25,6 +25,7 @@ type Config struct {
 	GithubClient       string
 	GithubClientSecret string
 	JWTSecret          string
+	InternalApiKey     string
 }
 
 func LoadConfig() Config {
@@ -57,5 +58,6 @@ func LoadConfig() Config {
 		GithubClient:       os.Getenv("GITHUB_CLIENT"),
 		GithubClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
 		JWTSecret:          os.Getenv("JWT_SECRET"),
+		InternalApiKey:     os.Getenv("INTERNAL_API_KEY"),
 	}
 }
