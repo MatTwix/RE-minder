@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/MatTwix/RE-minder/database"
@@ -62,6 +63,30 @@ func GetUserHabits(c fiber.Ctx, userId int) ([]models.Habit, error) {
 	if err != nil {
 		return nil, errors.New("Error while getting user habits: " + err.Error())
 	}
+	return habits, nil
+}
+
+func GetHabitsForNotification() ([]models.Habit, error) {
+	var habits []models.Habit
+
+	rows, err := database.DB.Query(context.Background(), `
+		SELECT h.id, h.user_id, h.name, h.description
+		FROM habits h
+		WHERE (NOW() AT TIME ZONE h.timezone)::time BETWEEN h.remind_time AND h.remind_time + INTERVAL '59 seconds'`)
+	if err != nil {
+		return habits, errors.New("Error while getting habits for notification: " + err.Error())
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var habit models.Habit
+		if err := rows.Scan(&habit.ID, &habit.UserId, &habit.Name, &habit.Description); err != nil {
+			log.Printf("Error scanning habit row: %v", err)
+			continue
+		}
+		habits = append(habits, habit)
+	}
+
 	return habits, nil
 }
 

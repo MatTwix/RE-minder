@@ -14,7 +14,7 @@ type habitsInput struct {
 	Description string    `json:"description,omitempty" validate:"max=256"`
 	Frequency   string    `json:"frequency" validate:"required,oneof=daily weekly monthly"`
 	RemindTime  string    `json:"remind_time" validate:"required"`
-	Timezone    string    `json:"timezone" validate:"required"`
+	Timezone    string    `json:"timezone"`
 	StartDate   time.Time `json:"start_date,omitempty"`
 }
 

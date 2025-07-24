@@ -7,6 +7,7 @@ import (
 	"github.com/MatTwix/RE-minder/config"
 	"github.com/MatTwix/RE-minder/database"
 	"github.com/MatTwix/RE-minder/routes"
+	"github.com/MatTwix/RE-minder/scheduler"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/fiber/v3/middleware/limiter"
@@ -20,6 +21,8 @@ func main() {
 
 	database.ConnectDB()
 	defer database.DB.Close()
+
+	scheduler.StartScheduler()
 
 	allowedOrigins := []string{
 		cfg.FrontendUrlProd,
