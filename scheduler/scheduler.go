@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/MatTwix/RE-minder/queue"
 	"github.com/MatTwix/RE-minder/services"
 	"github.com/robfig/cron/v3"
 )
@@ -26,7 +27,7 @@ func StartScheduler() {
 
 	go c.Start()
 
-	log.Println("Scheduler started successfully.")
+	log.Println("Scheduler started successfully")
 }
 
 func checkHabitsForReminder() {
@@ -58,6 +59,9 @@ func checkHabitsForReminder() {
 			continue
 		}
 
-		log.Printf("SIMULATING PUBLISH TO RabbitMQ: %s", string(taskBody))
+		err = queue.Publish("notification_tasks", taskBody)
+		if err != nil {
+			log.Printf("Error publishing task for user %d to RabbitMQ: %v", habit.UserId, err)
+		}
 	}
 }

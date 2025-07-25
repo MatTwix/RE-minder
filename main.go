@@ -6,6 +6,7 @@ import (
 
 	"github.com/MatTwix/RE-minder/config"
 	"github.com/MatTwix/RE-minder/database"
+	"github.com/MatTwix/RE-minder/queue"
 	"github.com/MatTwix/RE-minder/routes"
 	"github.com/MatTwix/RE-minder/scheduler"
 	"github.com/gofiber/fiber/v3"
@@ -22,6 +23,7 @@ func main() {
 	database.ConnectDB()
 	defer database.DB.Close()
 
+	queue.Connect()
 	scheduler.StartScheduler()
 
 	allowedOrigins := []string{

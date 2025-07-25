@@ -26,6 +26,8 @@ type Config struct {
 	GithubClientSecret string
 	JWTSecret          string
 	InternalApiKey     string
+
+	RabbitMQUrl string
 }
 
 func LoadConfig() Config {
@@ -59,5 +61,7 @@ func LoadConfig() Config {
 		GithubClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
 		JWTSecret:          os.Getenv("JWT_SECRET"),
 		InternalApiKey:     os.Getenv("INTERNAL_API_KEY"),
+
+		RabbitMQUrl: os.Getenv("RABBITMQ_URL"),
 	}
 }
