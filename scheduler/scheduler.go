@@ -62,6 +62,8 @@ func checkHabitsForReminder() {
 		err = queue.Publish("notification_tasks", taskBody)
 		if err != nil {
 			log.Printf("Error publishing task for user %d to RabbitMQ: %v", habit.UserId, err)
+		} else {
+			log.Printf("Message for user %d sended", habit.UserId)
 		}
 	}
 }
