@@ -27,6 +27,16 @@ type Config struct {
 	JWTSecret          string
 	InternalApiKey     string
 
+	DiscordClientID     string
+	DiscordClientSecret string
+	VKClientID          string
+	VKClientSecret      string
+
+	DiscordRedirectUrl string
+	VKRedirectUrl      string
+
+	BotsApiUrl string
+
 	RabbitMQUrl string
 }
 
@@ -61,6 +71,14 @@ func LoadConfig() Config {
 		GithubClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
 		JWTSecret:          os.Getenv("JWT_SECRET"),
 		InternalApiKey:     os.Getenv("INTERNAL_API_KEY"),
+
+		DiscordClientID:     os.Getenv("DISCORD_CLIENT_ID"),
+		DiscordClientSecret: os.Getenv("DISCORD_CLIENT_SECRET"),
+		VKClientID:          os.Getenv("VK_CLIENT_ID"),
+		VKClientSecret:      os.Getenv("VK_CLIENT_SECRET"),
+
+		DiscordRedirectUrl: os.Getenv("DISCORD_REDIRECT_URL"),
+		VKRedirectUrl:      os.Getenv("VK_REDIRECT_URL"),
 
 		RabbitMQUrl: os.Getenv("RABBITMQ_URL"),
 	}

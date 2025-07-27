@@ -15,6 +15,7 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
+	golang.org/x/oauth2 v0.30.0 // indirect
 )
 
 require (
