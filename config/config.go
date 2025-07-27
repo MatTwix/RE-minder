@@ -80,6 +80,8 @@ func LoadConfig() Config {
 		DiscordRedirectUrl: os.Getenv("DISCORD_REDIRECT_URL"),
 		VKRedirectUrl:      os.Getenv("VK_REDIRECT_URL"),
 
+		BotsApiUrl: os.Getenv("BOTS_API_URL"),
+
 		RabbitMQUrl: os.Getenv("RABBITMQ_URL"),
 	}
 }
