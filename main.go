@@ -6,6 +6,7 @@ import (
 
 	"github.com/MatTwix/RE-minder/config"
 	"github.com/MatTwix/RE-minder/database"
+	"github.com/MatTwix/RE-minder/oauth"
 	"github.com/MatTwix/RE-minder/queue"
 	"github.com/MatTwix/RE-minder/routes"
 	"github.com/MatTwix/RE-minder/scheduler"
@@ -22,6 +23,8 @@ func main() {
 
 	database.ConnectDB()
 	defer database.DB.Close()
+
+	oauth.RegisterProvider(oauth.NewDiscordProvider())
 
 	queue.Connect()
 	scheduler.StartScheduler()
