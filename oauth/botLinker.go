@@ -24,7 +24,7 @@ func linkChatToBot(platform, reminderUserIDStr, platformChatIDStr string) error 
 		return errors.New("invalid chat ID: " + platformChatIDStr)
 	}
 
-	payload := map[string]interface{}{
+	payload := map[string]any{
 		"reminder_user_id": reminderUserID,
 		"platform":         platform,
 		"chat_id":          platformChatID,
@@ -49,8 +49,8 @@ func linkChatToBot(platform, reminderUserIDStr, platformChatIDStr string) error 
 	}
 
 	if resp.StatusCode >= 300 {
-		bodyBytes, _ := io.ReadAll(req.Body)
-		log.Print(bodyBytes)
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		log.Print(string(bodyBytes))
 		return errors.New("bot api returned non-2xx status: " + resp.Status)
 	}
 	return nil

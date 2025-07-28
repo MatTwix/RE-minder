@@ -29,11 +29,11 @@ type Config struct {
 
 	DiscordClientID     string
 	DiscordClientSecret string
-	VKClientID          string
-	VKClientSecret      string
+	GoogleClientID      string
+	GoogleClientSecret  string
 
 	DiscordRedirectUrl string
-	VKRedirectUrl      string
+	GoogleRedirectUrl  string
 
 	BotsApiUrl string
 
@@ -74,11 +74,11 @@ func LoadConfig() Config {
 
 		DiscordClientID:     os.Getenv("DISCORD_CLIENT_ID"),
 		DiscordClientSecret: os.Getenv("DISCORD_CLIENT_SECRET"),
-		VKClientID:          os.Getenv("VK_CLIENT_ID"),
-		VKClientSecret:      os.Getenv("VK_CLIENT_SECRET"),
+		GoogleClientID:      os.Getenv("GOOGLE_CLIENT_ID"),
+		GoogleClientSecret:  os.Getenv("GOOGLE_CLIENT_SECRET"),
 
 		DiscordRedirectUrl: os.Getenv("DISCORD_REDIRECT_URL"),
-		VKRedirectUrl:      os.Getenv("VK_REDIRECT_URL"),
+		GoogleRedirectUrl:  os.Getenv("GOOGLE_REDIRECT_URL"),
 
 		BotsApiUrl: os.Getenv("BOTS_API_URL"),
 

@@ -25,7 +25,7 @@ func main() {
 	defer database.DB.Close()
 
 	oauth.RegisterProvider(oauth.NewDiscordProvider())
-	oauth.RegisterProvider(oauth.NewVKProider())
+	oauth.RegisterProvider(oauth.NewGoogleProvider())
 
 	queue.Connect()
 	scheduler.StartScheduler()
