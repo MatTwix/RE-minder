@@ -20,7 +20,7 @@ func NewVKProider() OAuthProvider {
 			ClientID:     cfg.VKClientID,
 			ClientSecret: cfg.VKClientSecret,
 			RedirectURL:  cfg.VKRedirectUrl,
-			Scopes:       []string{"email"},
+			Scopes:       nil,
 			Endpoint:     vk.Endpoint,
 		},
 	}
