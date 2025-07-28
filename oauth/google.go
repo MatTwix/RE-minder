@@ -16,7 +16,7 @@ func NewGoogleProvider() OAuthProvider {
 	return &googleProvider{
 		config: &oauth2.Config{
 			ClientID:     cfg.GoogleClientID,
-			ClientSecret: cfg.GoogleClientID,
+			ClientSecret: cfg.GoogleClientSecret,
 			RedirectURL:  cfg.GoogleRedirectUrl,
 			Scopes: []string{
 				"https://www.googleapis.com/auth/userinfo.email",
