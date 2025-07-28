@@ -12,16 +12,12 @@ import (
 	"github.com/MatTwix/RE-minder/config"
 )
 
-func linkChatToBot(platform, reminderUserIDStr, platformChatIDStr string) error {
+func linkChatToBot(platform, reminderUserIDStr, platformChatID string) error {
 	cfg := config.LoadConfig()
 
 	reminderUserID, err := strconv.Atoi(reminderUserIDStr)
 	if err != nil {
 		return errors.New("invalid reminder user ID: " + reminderUserIDStr)
-	}
-	platformChatID, err := strconv.Atoi(platformChatIDStr)
-	if err != nil {
-		return errors.New("invalid chat ID: " + platformChatIDStr)
 	}
 
 	payload := map[string]any{

@@ -45,7 +45,17 @@ func HandleCallback(c fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to get user info", "details": err.Error()})
 	}
 
-	err = linkChatToBot(provider.Platform(), expectedState, userInfo.ID)
+	linkChatID := userInfo.ID
+
+	if provider.Platform() == "google" {
+		linkChatID = userInfo.Email
+	}
+
+	if linkChatID == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Error getting chat ID% enter valid one"})
+	}
+
+	err = linkChatToBot(provider.Platform(), expectedState, linkChatID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to link chat to bot", "details": err.Error()})
 	}
