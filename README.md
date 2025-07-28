@@ -64,7 +64,7 @@ RE-minder/
 | user_id               | INTEGER   | NOT NULL, UNIQUE, REFERENCES users(id) ON DELETE CASCADE |
 | telegram_notification | BOOLEAN   | NOT NULL, DEFAULT FALSE                          |
 | discord_notification  | BOOLEAN   | NOT NULL, DEFAULT FALSE                          |
-| vk_notification       | BOOLEAN   | NOT NULL, DEFAULT FALSE                          |
+| google_notification       | BOOLEAN   | NOT NULL, DEFAULT FALSE                          |
 | created_at            | TIMESTAMP | NOT NULL, DEFAULT NOW()                          |
 | updated_at            | TIMESTAMP | NOT NULL, DEFAULT NOW()                          |
 
@@ -424,7 +424,7 @@ Retrieves the notification settings for a specific user.
     "user_id": 1,
     "telegram_notification": true,
     "discord_notification": false,
-    "vk_notification": false,
+    "google_notification": false,
     "created_at": "2025-07-22T10:00:00Z",
     "updated_at": "2025-07-22T10:00:00Z"
   }
@@ -441,7 +441,7 @@ Updates the notification settings for a specific user.
   {
     "telegram_notification": true,
     "discord_notification": true,
-    "vk_notification": false
+    "google_notification": false
   }
   ```
 
@@ -453,7 +453,7 @@ Updates the notification settings for a specific user.
     "user_id": 1,
     "telegram_notification": true,
     "discord_notification": true,
-    "vk_notification": false,
+    "google_notification": false,
     ...
   }
   ```
@@ -488,7 +488,7 @@ Retrieves the notification settings for a specific user. This endpoint is intend
     "user_id": 1,
     "telegram_notification": true,
     "discord_notification": false,
-    "vk_notification": false,
+    "google_notification": false,
     ...
   }
   ```

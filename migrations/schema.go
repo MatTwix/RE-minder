@@ -9,4 +9,5 @@ func Migrate(db *pgxpool.Pool) {
 	AddStartDateField(db)
 	CreateNotificationSettingsTable(db)
 	MakeUserIdFieldUniqueNotificationsSettingsTable(db)
+	СhangeVkFieldsToGoogleNotificationsTable(db)
 }

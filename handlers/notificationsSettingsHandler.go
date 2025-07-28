@@ -10,7 +10,7 @@ import (
 type notificationSettingsInput struct {
 	TelegramNotification bool `json:"telegram_notification"`
 	DiscordNotification  bool `json:"discord_notification"`
-	VKNotification       bool `json:"vk_notification"`
+	GoogleNotification   bool `json:"google_notification"`
 }
 
 func GetUserNotificationSettings(c fiber.Ctx) error {
@@ -40,7 +40,7 @@ func UpdateUserNotificationSettings(c fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid input: " + err.Error()})
 	}
 
-	settings, err := services.UpdateUserNotificationSettings(userID, input.TelegramNotification, input.DiscordNotification, input.VKNotification)
+	settings, err := services.UpdateUserNotificationSettings(userID, input.TelegramNotification, input.DiscordNotification, input.GoogleNotification)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error while updating notification settings: " + err.Error()})
 	}
