@@ -70,7 +70,7 @@ func GetHabitsForNotification() ([]models.Habit, error) {
 	var habits []models.Habit
 
 	rows, err := database.DB.Query(context.Background(), `
-		SELECT h.id, h.user_id, h.name, h.description
+		SELECT h.id, h.user_id, h.name, h.description, h.start_date, h.frequency
 		FROM habits h
 		WHERE (NOW() AT TIME ZONE h.timezone)::time BETWEEN h.remind_time AND h.remind_time + INTERVAL '59 seconds'`)
 	if err != nil {
@@ -80,11 +80,25 @@ func GetHabitsForNotification() ([]models.Habit, error) {
 
 	for rows.Next() {
 		var habit models.Habit
-		if err := rows.Scan(&habit.ID, &habit.UserId, &habit.Name, &habit.Description); err != nil {
+		if err := rows.Scan(&habit.ID, &habit.UserId, &habit.Name, &habit.Description, &habit.StartDate, &habit.Frequency); err != nil {
 			log.Printf("Error scanning habit row: %v", err)
 			continue
 		}
-		habits = append(habits, habit)
+		switch habit.Frequency {
+		case "daily":
+			if !time.Now().Before(habit.StartDate) {
+				habits = append(habits, habit)
+			}
+		case "weekly":
+			days := int(time.Since(habit.StartDate).Hours() / 24)
+			if days >= 0 && days%7 == 0 {
+				habits = append(habits, habit)
+			}
+		case "monthly":
+			if time.Now().Day() == habit.StartDate.Day() && !time.Now().Before(habit.StartDate) {
+				habits = append(habits, habit)
+			}
+		}
 	}
 
 	return habits, nil
