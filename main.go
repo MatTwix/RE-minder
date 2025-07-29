@@ -32,6 +32,7 @@ func main() {
 
 	allowedOrigins := []string{
 		cfg.FrontendUrlProd,
+		cfg.BotsApiUrl,
 	}
 
 	if cfg.FrontendEnv != "production" {
