@@ -1,10 +1,92 @@
 # RE-minder
 
-Open-source project built with Go Fiber + PostgreSQL, made by HSE student **Fedorov Matvey**.
+An open-source project built with Go Fiber + PostgreSQL, created by HSE student **Fedorov Matvey**.
 
-> "I feel like I've forgot something."
+> "I feel like I've forgotten something."
 
-From this moment, you will not.
+From this moment on, you will not.
+
+---
+
+## 🚀 Features
+
+- **Habit Management:** Create, track, and manage your daily, weekly, or monthly habits.
+- **Flexible Notifications:** Receive reminders via Telegram, Discord, or Google Calendar.
+- **GitHub Authentication:** Securely log in using your GitHub account.
+- **Account Linking:** Link multiple third-party services (Discord, Google) to a single profile.
+- **REST API:** A well-documented API for managing users, habits, and settings.
+- **Internal API:** A secure API for interacting with external services, such as a notification bot.
+
+---
+
+## ⚙️ Setup and Installation
+
+### Prerequisites
+
+- [Go](https://golang.org/doc/install) (version 1.20+)
+- [Docker](https://www.docker.com/get-started) and Docker Compose
+
+### Installation
+
+1. **Clone the repository:**
+
+    ```bash
+    git clone https://github.com/your-username/RE-minder.git
+    cd RE-minder
+    ```
+
+2. **Configure environment variables:**
+    Copy `.env.example` to `.env` and fill in the required values (API keys, database  connection parameters, etc.).
+
+    ```bash
+    cp .env.example .env
+    ```
+
+3. **Start the database and RabbitMQ:**
+    Use Docker Compose to run PostgreSQL and RabbitMQ in the background.
+
+    ```bash
+    docker-compose up -d
+    ```
+
+4. **Install dependencies:**
+
+    ```bash
+    go mod tidy
+    ```
+
+5. **Apply migrations:**
+    The application automatically applies migrations on startup. Ensure that the database connection is configured correctly.
+
+6. **Run the application:**
+
+    ```bash
+    go run main.go
+    ```
+
+    The server will be available at `http://localhost:8080`.
+
+---
+
+## 🔔 Notification Architecture
+
+The notification system is designed for flexibility and scalability.
+
+- **Scheduler (`/scheduler`):** Every minute, the scheduler checks the database for habits that need reminders, taking into account users' timezones.
+- **Message Queue (`/queue`):** When it's time for a reminder, the scheduler doesn't send it directly. Instead, it places a message in a **RabbitMQ** queue. This decouples the scheduling logic from the sending logic, increasing system reliability.
+- **External Worker (Bot):** A separate service (e.g., a Telegram bot) is expected to listen to this queue, retrieve messages, and send notifications to the end-user through the appropriate channel (Telegram, Discord, etc.).
+
+This approach makes it easy to add new notification methods without changing the core application code.
+
+---
+
+## 🔗 OAuth and Account Linking
+
+The project uses OAuth 2.0 for authentication and authorization.
+
+- **Primary Authentication:** Login is handled via **GitHub**. A new user is created upon the first login.
+- **Service Linking:** After logging in, a user can link other services like **Discord** or **Google** to their account. This is done using a dedicated endpoint that generates a unique linking URL.
+- **Provider Factory (`/oauth/factory.go`):** A Factory pattern is used to manage different OAuth providers, making it easy to add new ones in the future.
 
 ---
 
@@ -19,8 +101,11 @@ RE-minder/
 ├── middleware/             # Custom middleware for authentication and user management
 ├── migrations/             # Database schema and migration files
 ├── models/                 # Data models defining the application's entities
+├── oauth/                  # Logic for OAuth2 providers (Github, Discord, Google)
+├── queue/                  # RabbitMQ message queue logic
 ├── routes/                 # API route definitions and setup
-├── services/               # Business logic and data access layer for users and habits
+├── scheduler/              # Job scheduler for sending notifications
+├── services/               # Business logic and data access layer
 ├── main.go                 # Main application entry point
 └── go.mod                  # Go module dependencies
 ```
@@ -96,6 +181,41 @@ Handles the callback from GitHub after authentication. On success, it creates or
   {
     "token": "your_jwt_token_here",
     "user": "github_username"
+  }
+  ```
+
+---
+
+### 🤖 Bot Linking
+
+These endpoints are used to link third-party accounts (e.g., Discord, Google) to a user's RE-minder profile.
+
+- **Access:** Authenticated users.
+
+#### `GET /auth/bot/:platform`
+
+Redirects the user to the OAuth authorization page of the selected platform (`discord`, `google`, etc.).
+
+- **URL Parameters:**
+  - `platform` (string, required): The platform to authorize with. Supported values: `discord`, `google`.
+
+#### `GET /auth/bot/:platform/callback`
+
+Handles the callback from the OAuth provider after successful authorization. Links the external account to the current user.
+
+- **Success Response (200)**
+  
+  ```json
+  {
+    "message": "Account linked successfully"
+  }
+  ```
+
+- **Error Response (400/500)**
+  
+  ```json
+  {
+    "error": "Failed to link account"
   }
   ```
 
@@ -501,5 +621,6 @@ Retrieves the notification settings for a specific user. This endpoint is intend
   - [PostgreSQL](https://www.postgresql.org/) - Database
   - [pgx](https://github.com/jackc/pgx) - PostgreSQL driver
   - [JWT](https://jwt.io/) - For authentication
+  - [RabbitMQ](https://www.rabbitmq.com/) - Message broker
 - **Other:**
   - [Docker](https://www.docker.com/) - For containerization
